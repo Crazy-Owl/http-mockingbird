@@ -18,4 +18,4 @@
                    [addr (= 200 status)])))))
 
 (defn get-addresses [addresses & {:keys [cookies] :as opts}]
-  (for [a adresses] [a (req-get (merge (r/new-request a) opts))]))
+  (for [a addresses] [a (req-get (merge (r/new-request a) opts))]))
