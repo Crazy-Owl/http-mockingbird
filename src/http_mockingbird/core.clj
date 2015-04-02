@@ -5,6 +5,7 @@
 
 ; {:request :body :cookies}
 
+;; cookies
 (defn set-cookie [request cookie-name cookie-val]
   (assoc-in request [:cookies cookie-name] cookie-val))
 
@@ -15,6 +16,11 @@
          (apply concat)
          (apply str))))
 
+(defn split-cookies [s]
+  (into {} (for [s (s/split s #"; ")] (s/split s #"=" 2))))
+
+;; GET
+
 (defn req-get [{:keys [cookies address query] :as request}]
   (let [headers (into {} (filter (fn [[k v]] v) [["Cookie" (stringify-cookies cookies)]]))
         options {:headers headers}]
@@ -23,8 +29,7 @@
 (defn req-get-sync [& args]
   @(apply req-get args))
 
-(defn split-cookies [s]
-  (into {} (for [s (s/split s #"; ")] (s/split s #"=" 2))))
+;; Specific GET stuff
 
 (defn ensure-200 [addresses & {:keys [cookies] :as opts}]
   (->> (for [a addresses] [a (req-get (merge {:address a} opts))])
