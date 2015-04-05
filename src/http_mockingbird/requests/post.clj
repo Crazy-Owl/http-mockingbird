@@ -18,7 +18,11 @@
   (u/get-path (assoc request :body (json/read-str (:body request))) path))
 
 (defn ensure-post-200 [address-map & {:keys [cookies] :as opts}]
-  (->> (for [[a fm] address-map] [a (req-post (merge (r/new-request a) {:form fm} opts))])
+  (->> (for [[a fm] address-map] [a (req-post (r/merge-request a {:form fm} opts))])
        (map (fn [[addr promise]]
               (let [{:keys [status]} @promise]
                 [addr (= 200 status)])))))
+
+(defn post-data [address-map & opts]
+  (->> (for [[a fm] address-map] [a (req-post (r/merge-request a {:form fm} opts))])
+       (doall (map (fn [a b] [a @b])))))

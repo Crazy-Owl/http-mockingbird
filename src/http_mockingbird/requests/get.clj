@@ -11,11 +11,10 @@
 (defn req-get-sync [& args]
   @(apply req-get args))
 
-(defn ensure-200 [addresses & {:keys [cookies] :as opts}]
+(defn get-addresses [addresses & opts]
   (->> (for [a addresses] [a (req-get (merge (r/new-request a) opts))])
-       (map (fn [[addr promise]]
-                 (let [{:keys [status]} @promise]
-                   [addr (= 200 status)])))))
+       (doall (map (fn [a b] [a @b])))))
 
-(defn get-addresses [addresses & {:keys [cookies] :as opts}]
-  (for [a addresses] [a (req-get (merge (r/new-request a) opts))]))
+(defn ensure-200 [addresses & opts]
+  (->> (get-addresses addresses)
+       (map (fn [a b] [a (= 200 (:status b))]))))
