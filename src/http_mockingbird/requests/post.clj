@@ -6,7 +6,7 @@
             [http-mockingbird.utils :as u]))
 
 (defn req-post [{:keys [cookies address form] :as request}]
-  (let [headers (into {} (filter (fn [[k v] v]) [["Cookie" (cookies/stringify-cookies cookies)]]))
+  (let [headers (into {} (filter (fn [[k v]] v) [["Cookie" (cookies/stringify-cookies cookies)]]))
         options {:headers headers :form-params form}]
     (http/post address options)))
 
