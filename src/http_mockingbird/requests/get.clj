@@ -13,8 +13,9 @@
 
 (defn get-addresses [addresses & opts]
   (->> (for [a addresses] [a (req-get (merge (r/new-request a) opts))])
-       (doall (map (fn [a b] [a @b])))))
+       (map (fn [[a b]] [a @b]))
+       (doall)))
 
 (defn ensure-200 [addresses & opts]
   (->> (get-addresses addresses)
-       (map (fn [a b] [a (= 200 (:status b))]))))
+       (map (fn [[a b]] [a (= 200 (:status b))]))))

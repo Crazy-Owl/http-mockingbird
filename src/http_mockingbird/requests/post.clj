@@ -24,5 +24,6 @@
                 [addr (= 200 status)])))))
 
 (defn post-data [address-map & opts]
-  (->> (for [[a fm] address-map] [a (req-post (r/merge-request a {:form fm} opts))])
-       (doall (map (fn [a b] [a @b])))))
+  (->> (for [[a fm] address-map] [a (req-post (r/merge-request a {:form fm} (apply hash-map opts)))])
+       (map (fn [[a b]] [a @b]))
+       (doall)))
