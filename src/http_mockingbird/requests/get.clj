@@ -12,10 +12,15 @@
   @(apply req-get args))
 
 (defn get-addresses [addresses & opts]
-  (->> (for [a addresses] [a (req-get (merge (r/new-request a) opts))])
+  (->> (for [a addresses] [a (req-get (r/merge-request a (apply hash-map opts)))])
        (map (fn [[a b]] [a @b]))
        (doall)))
 
 (defn ensure-200 [addresses & opts]
   (->> (get-addresses addresses)
        (map (fn [[a b]] [a (= 200 (:status b))]))))
+
+(defn get-data [address-map & opts]
+  (->> (for [[a q] address-map] [a (req-get (r/merge-request a {:query q} (apply hash-map opts)))])
+       (map (fn [[a b]] [a @b]))
+       (doall)))
